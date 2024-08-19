@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: istio-ttmtools-lowers-eastus2-01
+  namespace: argocd
+spec:
+  destination:
+    namespace: istio-system
+    server: https://ttmtoolslowerseastus201-lnbvbj2n.hcp.eastus2.azmk8s.io
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    jsonPointers:
+    - /webhooks/0/namespaceSelector
+    kind: ValidatingWebhookConfiguration
+  project: platform-tools
+  sources:
+  - ref: valuesRepo
+    repoURL: https://github.com/carlosgit2016/service-mesh-comparison-poc.git  
+    targetRevision: HEAD 
+  - chart: istiod 
+    helm:
+      releaseName: istiod 
+      valueFiles:
+      - $valuesRepo/2-manifests/istio/values.yaml
+    repoURL: https://istio-release.storage.googleapis.com/charts
+    targetRevision: "1.23.0" 
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true

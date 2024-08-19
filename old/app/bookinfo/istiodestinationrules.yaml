@@ -1,0 +1,87 @@
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: productpage
+spec:
+  host: productpage # Service name
+  trafficPolicy:
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 1 # Limits the maximum number of pending (waiting to be processed) HTTP/1.x requests to 1
+        maxRequestsPerConnection: 1 # Limits the number of requests that can be sent on a single connection to 1
+      tcp:
+        maxConnections: 1 # Limits the maximum number of TCP connections to the host to 1. This means only one connection will be kept open at any time. 
+    outlierDetection: # Circuit breaker settings
+      baseEjectionTime: 3m # Specifies the minimum time a host will be ejected (removed from the pool of healthy hosts) after being detected as unhealthy. In this case, if a host is detected as unhealthy, it will be ejected for at least 3 minutes before it can be considered for re-inclusion.
+      consecutive5xxErrors: 1 # Specifies the number of consecutive 5xx errors that must occur before a host is ejected from the pool. In this case, if a host returns a 5xx error, it will be ejected after the first error.
+      interval: 1s # Specifies the time interval between ejection analysis. In this case, the ejection analysis will be performed every second.
+      maxEjectionPercent: 100 # Specifies the maximum percentage of hosts in the load balancing pool that can be ejected. In this case, if all hosts are unhealthy, all of them will be ejected.
+  subsets:
+  - name: blue
+    labels:
+      version: v1 # Label selector
+  - name: green
+    labels:
+      version: v2
+...
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: reviews
+spec:
+  host: reviews
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+  - name: v3
+    labels:
+      version: v3
+...
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: ratings
+spec:
+  host: ratings
+  subsets:
+  - name: blue
+    labels:
+      version: v1
+  - name: green
+    labels:
+      version: v2
+...
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: details
+spec:
+  host: details
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+...
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: nginx
+spec:
+  host: ingress-nginx-controller
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+...

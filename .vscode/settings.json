@@ -1,0 +1,5 @@
+{
+    "yaml.schemas": {
+        "https://json.schemastore.org/yamllint.json": "file:///home/cflor/git/personal.d/service-mesh-comparison-poc/app/bookinfo/istiodestinationrules.yaml"
+    }
+}

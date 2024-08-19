@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bookinfo-ttmtools-lowers-eastus2-01
+  namespace: argocd
+spec:
+  destination:
+    namespace: default 
+    server: https://ttmtoolslowerseastus201-lnbvbj2n.hcp.eastus2.azmk8s.io
+  project: platform-tools
+  source:
+    repoURL: https://github.com/carlosgit2016/service-mesh-comparison-poc.git  
+    targetRevision: HEAD 
+    path: app/bookinfo
+    directory:
+      recurse: false
+      jsonnet: {}
+      include: '*.yaml'
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
