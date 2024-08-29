@@ -463,10 +463,10 @@ spec:
           periodSeconds: 30
         livenessProbe:
           httpGet:
-            path: /kiali/healthz
+            path: /kiali/api/namespaces
             port: api-port
             scheme: HTTP
-          initialDelaySeconds: 5
+          initialDelaySeconds: 60
           periodSeconds: 30
         env:
         - name: ACTIVE_NAMESPACE
