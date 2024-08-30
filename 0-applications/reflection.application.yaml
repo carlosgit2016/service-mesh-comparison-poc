@@ -11,11 +11,11 @@ spec:
   source:
     repoURL: https://github.com/carlosgit2016/service-mesh-comparison-poc.git  
     targetRevision: HEAD 
-    path: "1-services/reflection"
+    path: "1-services/reflection/manifests/"
     directory:
       recurse: false 
       jsonnet: {}
-      include: 'manifest.yaml'
+      include: 'big-mesh-manifest.yaml'
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

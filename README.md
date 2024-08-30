@@ -85,6 +85,9 @@ This method uses the classic istio ingress gateway. The ingress gateway will be 
 ###### Kubernetes Gateway API
 This method uses the new Kubernetes Gateway API implementation to configure the ingress gateway. The ingress gateway will be responsible for routing the traffic to the services. The ingress gateway will be a service of type LoadBalancer.
 
+### Q&A
+- Is there any additional delay when the services are in the mesh ?
+
 ### Links
 - https://productpage.staging.telematicsplatform.tools.staging
 - https://kiali.staging.telematicsplatform.tools.staging

@@ -1,17 +1,23 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
-	httpCode int
-	port     string = os.Getenv("PORT")
+	httpCode           int
+	port               string = os.Getenv("PORT")
+	downstreamServices string = os.Getenv("DOWNSTREAM_SERVICES")
+	mu                 sync.Mutex
 )
 
 func parseMetadata() map[string]any {
@@ -25,6 +31,57 @@ func parseMetadata() map[string]any {
 	}
 }
 
+func requestDownstreamServices() map[string]any {
+	if downstreamServices == "" {
+		return nil
+	}
+	splitedDs := strings.Split(downstreamServices, ",")
+
+	var wg sync.WaitGroup
+	wg.Add(len(splitedDs))
+
+	responses := map[string]any{}
+
+	for _, ds := range splitedDs {
+		go func(ds string) {
+			defer wg.Done()
+
+			mu.Lock()
+			svcAdr := fmt.Sprintf("http://%s:8080", ds)
+			fmt.Printf("Trying to connect to %s \n", svcAdr)
+
+			hr, err := http.Get(svcAdr)
+			if err != nil {
+				fmt.Printf("Failed to request to %s \n", svcAdr)
+				responses[ds] = map[string]any{
+					"err": err,
+				}
+				fmt.Print(err)
+			}
+
+			if hr.StatusCode < 200 && hr.StatusCode >= 400 {
+				fmt.Printf("Failed to connect to %s \n", svcAdr)
+				responses[ds] = map[string]any{
+					"err": fmt.Sprintf("Failed to connect to %s - %v", svcAdr, hr.StatusCode),
+				}
+			}
+
+			defer hr.Body.Close()
+			body, _ := io.ReadAll(hr.Body)
+			var v any
+			json.Unmarshal(body, &v)
+			responses[ds] = v
+
+			mu.Unlock()
+
+		}(ds)
+	}
+
+	wg.Wait()
+	fmt.Println("Responses: ", responses)
+	return responses
+
+}
 func main() {
 
 	r := gin.Default()
@@ -42,7 +99,12 @@ func main() {
 			httpCode = n
 		}
 
-		c.JSON(httpCode, parseMetadata())
+		rds := requestDownstreamServices()
+
+		c.JSON(httpCode, gin.H{
+			"downstreamServices": rds,
+			"metadata":           parseMetadata(),
+		})
 	})
 
 	if port == "" {
