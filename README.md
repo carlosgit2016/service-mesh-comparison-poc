@@ -85,6 +85,15 @@ This method uses the classic istio ingress gateway. The ingress gateway will be 
 ###### Kubernetes Gateway API
 This method uses the new Kubernetes Gateway API implementation to configure the ingress gateway. The ingress gateway will be responsible for routing the traffic to the services. The ingress gateway will be a service of type LoadBalancer.
 
+#### Kubernetes API Gateway x Istio gateway controller
+
+Kubernetes Gateway API is an entire API specification for dealing with Gateway definition, configuration and management as well as traffic management. We can use this definition for any service mesh that supports it and declared its own gateway class, in summary we can have a gateway to translate the traffic to an internal service in the cluster from a source that doesn't know about the cluster.
+
+
+
+##### Supported routing
+https://gateway-api.sigs.k8s.io/concepts/api-overview/#route-summary-table
+
 ### Q&A
 - Is there any additional delay when the services are in the mesh ?
 
