@@ -13,7 +13,7 @@ kubectl create deployment "$SERVICE_NAME" "-n$NAMESPACE" \
     --port=80 \
     --replicas=1
 
-kubectl wait --for=condition=Available "-n$NAMESPACE" deploy "$SERVICE_NAME"
+kubectl wait --for=condition=Available "-n$NAMESPACE" --timeout=1s deploy "$SERVICE_NAME"
 
 kubectl patch deployment "$SERVICE_NAME" "-n$NAMESPACE" --type='json' -p="[
   {

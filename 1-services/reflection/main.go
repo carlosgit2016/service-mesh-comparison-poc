@@ -101,9 +101,18 @@ func main() {
 
 		rds := requestDownstreamServices()
 
+		rb, err := io.ReadAll(c.Request.Body)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err)
+		}
+		var v any
+		json.Unmarshal(rb, &v)
+
 		c.JSON(httpCode, gin.H{
 			"downstreamServices": rds,
 			"metadata":           parseMetadata(),
+			"headers":            c.Request.Header,
+			"client_ip":          c.ClientIP(),
 		})
 	})
 

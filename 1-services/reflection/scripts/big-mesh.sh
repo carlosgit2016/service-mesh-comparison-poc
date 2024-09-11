@@ -22,5 +22,5 @@ services=(
 )
 
 for service in "${!services[@]}"; do
-    ./reflection.sh "$service" "${services[$service]}" "carlosflor25/reflection:v2" "mesh-example" "big-mesh-manifest.yaml"
+    ./reflection.sh "$service" "${services[$service]}" "carlosflor25/reflection:v3" "mesh-example" "big-mesh-manifest.yaml"
 done
