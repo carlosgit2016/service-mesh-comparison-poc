@@ -80,31 +80,31 @@ kubectl patch deployment "$SERVICE_NAME" "-n$NAMESPACE" --type='json' -p="[
   }
 ]"
 
-kubectl patch deployment "$SERVICE_NAME" "-n$NAMESPACE" --type='json' -p='[
-  {
-    "op": "add", "path": "/spec/template/spec/tolerations", "value": [{
-      "key": "kubernetes.azure.com/scalesetpriority",
-      "operator": "Equal",
-      "value": "spot",
-      "effect": "NoSchedule"
-    }]
-  },
-  {
-    "op": "add", "path": "/spec/template/spec/affinity", "value": {
-      "nodeAffinity": {
-        "requiredDuringSchedulingIgnoredDuringExecution": {
-          "nodeSelectorTerms": [{
-            "matchExpressions": [{
-              "key": "agentpool",
-              "operator": "NotIn",
-              "values": ["default"]
-            }]
-          }]
-        }
-      }
-    }
-  }
-]'
+# kubectl patch deployment "$SERVICE_NAME" "-n$NAMESPACE" --type='json' -p='[
+#   {
+#     "op": "add", "path": "/spec/template/spec/tolerations", "value": [{
+#       "key": "kubernetes.azure.com/scalesetpriority",
+#       "operator": "Equal",
+#       "value": "spot",
+#       "effect": "NoSchedule"
+#     }]
+#   },
+#   {
+#     "op": "add", "path": "/spec/template/spec/affinity", "value": {
+#       "nodeAffinity": {
+#         "requiredDuringSchedulingIgnoredDuringExecution": {
+#           "nodeSelectorTerms": [{
+#             "matchExpressions": [{
+#               "key": "agentpool",
+#               "operator": "NotIn",
+#               "values": ["default"]
+#             }]
+#           }]
+#         }
+#       }
+#     }
+#   }
+# ]'
 
 {
   echo "---"
